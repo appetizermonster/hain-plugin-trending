@@ -1,0 +1,20 @@
+{
+  "name": "hain-plugin-trending",
+  "version": "0.0.1",
+  "description": "a hain plugin for github trending",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Heejin Lee <monster@teamappetizer.com>",
+  "license": "MIT",
+  "dependencies": {
+    "co": "^4.6.0",
+    "github-trending": "^1.3.1",
+    "lodash": "^4.6.1"
+  },
+  "hain": {
+    "prefix": "/trending",
+    "icon": "#fa fa-github"
+  }
+}
