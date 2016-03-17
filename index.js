@@ -3,7 +3,6 @@
 const _ = require('lodash');
 const co = require('co');
 const trending = require('github-trending');
-const shell = require('electron').shell;
 
 const TEMP_ID = '__trending';
 const CACHE_DURATION_SEC = 30 * 60; // 30 mins
@@ -22,6 +21,7 @@ const LANG_COLORS = {
 };
 
 module.exports = (context) => {
+  const shell = context.shell;
 
   let cachedRepos = [];
   let lastFetchTime = 0;
@@ -44,17 +44,17 @@ module.exports = (context) => {
     });
   }
 
-  function* startup() {
+  function startup() {
     fetchRepos(() => {});
   }
 
-  function* search(query, reply) {
-    reply([{
+  function* search(query, res) {
+    res.add({
       id: TEMP_ID,
       title: 'fetching...',
       desc: 'from Github.com',
       icon: '#fa fa-circle-o-notch fa-spin'
-    }]);
+    });
 
     const ret = yield new Promise((resolve, reject) => {
       fetchRepos((repos) => {
@@ -64,8 +64,8 @@ module.exports = (context) => {
       });
     });
 
-    reply({ remove: TEMP_ID });
-    return ret.map((x) => {
+    res.remove(TEMP_ID);
+    const results = ret.map((x) => {
       let lang = x.language;
       if (lang.length === 0) {
         lang = 'None';
@@ -77,17 +77,18 @@ module.exports = (context) => {
         desc: `<span style='border-radius: 5px; background-color: ${langColor}; color: #ffffff; padding: 2px'>${lang}</span> / ${x.star} / ${x.description}`
       };
     });
+    res.add(results);
   }
 
-  function* execute(id, payload) {
+  function execute(id, payload) {
     if (id === TEMP_ID)
       return;
     shell.openExternal(id);
   }
 
   return {
-    startup: co.wrap(startup),
+    startup,
     search: co.wrap(search),
-    execute: co.wrap(execute)
+    execute
   };
 };

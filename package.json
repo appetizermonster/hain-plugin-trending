@@ -1,6 +1,6 @@
 {
   "name": "hain-plugin-trending",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "a hain plugin for github trending",
   "main": "index.js",
   "scripts": {
